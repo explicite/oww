@@ -45,23 +45,30 @@ Matrix* uncp_css(CCS* ccs){
 
 //Sparse matrix initializers
 void f1(Matrix matrix, int k){
+  f2(matrix, k, 1);
+}
+
+void f2(Matrix matrix, int k, int w){
   for(int i = 0; i < matrix.m; i++){
     for(int j = 0; j < matrix.n; j++){
-      if(i == j-k) 
-	matrix.mtx[i][j] = next(1,2);
-      else 
+      if(i == j-(k%matrix.n)){ 
+	for(int l = 0; l < w; l++){
+	  matrix.mtx[i][(matrix.n+(j+l)%matrix.n)%matrix.n] = next(1,2);
+	  matrix.mtx[i][(matrix.n+(j-l)%matrix.n)%matrix.n] = next(1,2);
+	}
+      }else if(j < (matrix.n+(j+w)%matrix.n)%matrix.n ||
+	       j > (matrix.n+(j-w)%matrix.n)%matrix.n){
 	matrix.mtx[i][j] = next(0,1);
+      }
     }
   }
 }
 
-Matrix* f2(Matrix* matrix, int k, int w){
+void f3(Matrix matrix, int k){
+  f4(matrix, k, 1);
 }
 
-Matrix* f3(Matrix* matrix, int k){
-}
-
-Matrix* f4(Matrix* matrix, int k, int w){
+void f4(Matrix matrix, int k, int w){
 }
 
 //Clean up

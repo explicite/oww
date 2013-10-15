@@ -1,7 +1,7 @@
 #gcc
 *.o
 /out
-app
+*.out
 
 #qt
 *~

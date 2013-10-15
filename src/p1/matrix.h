@@ -38,9 +38,9 @@ Matrix* uncp_css(CCS*);
 
 //Sparse matrix initializers
 void f1(Matrix, int);
-Matrix* f2(Matrix*, int, int);
-Matrix* f3(Matrix*, int);
-Matrix* f4(Matrix*, int, int);
+void f2(Matrix, int, int);
+void f3(Matrix, int);
+void f4(Matrix, int, int);
 
 //Clean up
 void clean(Matrix*);
