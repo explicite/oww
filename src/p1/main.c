@@ -28,7 +28,7 @@ int main(){
   scanf("%d", &z);
   
   Matrix matrix;
-  matrix=init(m,n);
+  matrix=init_matrix(m,n);
   f1(matrix, k);
   CRS crs1 = cp_crs(matrix);
   CCS ccs1 = cp_ccs(matrix);
@@ -56,9 +56,6 @@ int main(){
   print(matrix, f);
   print_crs(crs4,f);
   print_ccs(ccs4,f);
-  
-  
- 
   
   return 0;
 }

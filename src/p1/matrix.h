@@ -1,13 +1,20 @@
 #include <stdio.h> 
 
 typedef struct {
+  double* v;
+  int size;
+} Vector;
+
+Vector init_vector(int);
+Vector gen_vector(int, int, int);
+
+typedef struct {
   double** mtx;
   int m;
   int n;
-  
 } Matrix;
 
-Matrix init(int, int);
+Matrix init_matrix(int, int);
 void print(Matrix, FILE*);
 
 //Compress sparse matrix
@@ -59,3 +66,7 @@ void zero_row(Matrix, int);
 void zero_collumn(Matrix, int);
 
 int non_zero(Matrix);
+
+//Matrix multiplication
+Vector mtp_css(CCS, Vector);
+Vector mtp_crs(CRS, Vector);

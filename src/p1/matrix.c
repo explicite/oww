@@ -3,7 +3,29 @@
 #include <stdlib.h>
 #include <time.h>
 
-Matrix init(int m, int n){
+
+Vector init_vector(int size){
+  srand(time(NULL));
+  Vector vector;
+  vector.size = size;
+  
+  double* v;
+  v = (double*) malloc(size*sizeof(double));
+  vector.v = v;
+  
+  return vector;
+}
+
+Vector gen_vector(int size, int min, int max){
+  Vector vector = init_vector(size);
+  
+  for(int i = 0; i < vector.size; i++)
+    vector.v[i] = next(min, max);
+  
+  return vector;
+}
+
+Matrix init_matrix(int m, int n){
   srand(time(NULL));
   Matrix matrix;
   matrix.m = m;
@@ -18,6 +40,8 @@ Matrix init(int m, int n){
   
   return matrix;
 }
+
+//Multiplication
 
 void print(Matrix matrix, FILE* f){
   for(int i = 0; i < matrix.m; i++){
@@ -228,4 +252,23 @@ int non_zero(Matrix matrix){
 	z++;
   
   return z;
+}
+
+//Matrix multiplication
+Vector mtp_css(CCS ccs, Vector vector){
+  Vector product = init_vector(vector.size);
+  //TODO
+  return product;
+}
+
+Vector mtp_crs(CRS crs, Vector vector){
+  Vector product = init_vector(vector.size);
+  
+  for(int j = 0; j < vector.size; j++){
+    for(int i = crs.row_ptr[j]; i < crs.row_ptr[j+1]-1; i++){
+      product.v[crs.col_ind[i]] = product.v[crs.col_ind[i]] + crs.val[i] * vector.v[j];
+    }
+  }
+  
+  return product;
 }
