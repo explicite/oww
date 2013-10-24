@@ -1,4 +1,4 @@
-#include "matrix.h"
+#include "compres.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,51 +11,15 @@ int main(){
     exit(1);
   }
   
-  int m,n;
-  int k,w,z;
-  
-  //Pierwsza macierz
-  printf("Podaj rozmiar macierzy\nX:");
-  scanf("%d", &m);
-  printf("Y:");
-  scanf("%d", &n);
- 
-  printf("Podaj szerokosc diagonalej:");
-  scanf("%d", &k);
-  printf("Podaj przesuniecie diagonalnej:");
-  scanf("%d", &w);
-  printf("Podaj ilosc zer:");
-  scanf("%d", &z);
-  
-  Matrix matrix;
-  matrix=init_matrix(m,n);
-  f1(matrix, k);
-  CRS crs1 = cp_crs(matrix);
-  CCS ccs1 = cp_ccs(matrix);
-  print(matrix, f);
-  print_crs(crs1,f);
-  print_ccs(ccs1,f);
-  
-  f2(matrix, k, w, z);
-  CRS crs2 = cp_crs(matrix);
-  CCS ccs2 = cp_ccs(matrix);
-  print(matrix, f);
-  print_crs(crs2,f);
-  print_ccs(ccs2,f);
-  
-  f3(matrix, k);
-  CRS crs3 = cp_crs(matrix);
-  CCS ccs3 = cp_ccs(matrix);
-  print(matrix, f);
-  print_crs(crs3,f);
-  print_ccs(ccs3,f);
-  
-  f4(matrix, k, w, z);
-  CRS crs4 = cp_crs(matrix);
-  CCS ccs4 = cp_ccs(matrix);
-  print(matrix, f);
-  print_crs(crs4,f);
-  print_ccs(ccs4,f);
+  //Mutliplication
+  Vector vector = gen_vector(3, 1, 2);
+  print_vector(vector);
+  Matrix mtx = init_matrix(3, 3);
+  f2(mtx,1,0,0);
+  print_matrix(mtx);
+  CRS crs = cp_crs(mtx);
+  print_crs(crs);
+  Vector product = mtp_crs(crs, vector);
   
   return 0;
 }
