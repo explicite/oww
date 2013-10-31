@@ -1,4 +1,4 @@
-#include "compres.h"
+#include "matrix.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -19,7 +19,13 @@ int main(){
   print_matrix(mtx);
   CRS crs = cp_crs(mtx);
   print_crs(crs);
-  Vector product = mtp_crs(crs, vector);
+  //Vector product = mtp_crs(crs, vector);
+  
+  //Testing
+  CRS crs2 = copy_crs(crs);
+  crs2.val[0] = 1000;
+  if(assert_crs(crs, crs2))
+    print_crs(crs2);
   
   return 0;
 }
