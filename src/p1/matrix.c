@@ -146,20 +146,17 @@ CCS cp_ccs(Matrix matrix){
     for(int j = 0; j < matrix.n; j++){
       if(matrix.mtx[j][i] > 0){
 	ccs.val[val_num] = matrix.mtx[j][i];
-	ccs.row_ind[val_num] = j+1;
+	ccs.row_ind[val_num] = j;
 	
-	val_num++;
 	if(f_in_col == 1){
 	  ccs.col_ptr[i] = val_num;
 	  f_in_col = 0;
 	}
+	val_num++;
       }
     }
     f_in_col = 1;
   }
-  
-  ccs.val[ccs.val_size-1]=-1;
-  ccs.row_ind[ccs.val_size-1]=ccs.val_size;
   
   return ccs;
 }
@@ -222,7 +219,7 @@ CCS copy_ccs(CCS oryg){
   return ccs;
 }
 
-Vector mtp_css(CCS ccs, Vector vector){
+Vector mtp_ccs(CCS ccs, Vector vector){
   Vector product = init_vector(vector.size);
   //TODO
   return product;
@@ -240,7 +237,7 @@ CRS init_CRS(int val_size, int row_num){
 }
 
 CRS cp_crs(Matrix matrix){
-  CRS crs = init_CRS(non_zero(matrix)+1, matrix.m);
+  CRS crs = init_CRS(non_zero(matrix), matrix.m+1);
   
   int val_num = 0;
   int f_in_row = 1;
@@ -249,20 +246,19 @@ CRS cp_crs(Matrix matrix){
     for(int j = 0; j < matrix.n; j++){
       if(matrix.mtx[i][j] > 0){
 	crs.val[val_num] = matrix.mtx[i][j];
-	crs.col_ind[val_num] = j+1;
+	crs.col_ind[val_num] = j;
 	
-	val_num++;
 	if(f_in_row == 1){
 	  crs.row_ptr[i] = val_num;
 	  f_in_row = 0;
 	}
+	val_num++;
       }
     }
     f_in_row = 1;
   }
   
-  crs.val[crs.val_size-1]=-1;
-  crs.col_ind[crs.val_size-1]=crs.val_size;
+  crs.row_ptr[matrix.m]=crs.val_size;
   
   return crs;
 }
@@ -328,18 +324,9 @@ CRS copy_crs(CRS oryg){
 Vector mtp_crs(CRS crs, Vector vector){
   Vector product = init_vector(vector.size);
   
-  //for(int j = 0; j < vector.size; j++){
-  //  for(int i = crs.row_ptr[j]; i < crs.row_ptr[j+1]-1; i++){
-  //    product.v[crs.col_ind[i]] = 1.0;
-  //  }
-  //}
-  
-  for(int i = 0; i < vector.size; i++){
-    for(int j = crs.row_ptr[i]; j < crs.row_ptr[i+1]-1; j++){
-      printf("%d ", crs.val[j]);
-      product.v[i] = product.v[i] * crs.val[j] + vector.v[crs.col_ind[j]];
-    }
-  }
+  for(int i = 0; i < vector.size; i++)
+    for(int j = crs.row_ptr[i]; j < crs.row_ptr[i+1]; j++)
+      product.v[i] = product.v[i] + crs.val[j] * vector.v[crs.col_ind[j]];
   
   return product;
 }

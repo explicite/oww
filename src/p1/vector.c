@@ -9,9 +9,7 @@ Vector init_vector(int size){
   Vector vector;
   vector.size = size;
   
-  double* v;
-  v = (double*) malloc(size*sizeof(double));
-  vector.v = v;
+  vector.v = (double*) malloc(vector.size*sizeof(double));
   
   return vector;
 }
