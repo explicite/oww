@@ -4,3 +4,6 @@ int assert_vector(Vector, Vector);
 int assert_matrix(Matrix, Matrix);
 int assert_ccs(CCS, CCS);
 int assert_crs(CRS, CRS);
+
+//Test
+void test(int, const char*);

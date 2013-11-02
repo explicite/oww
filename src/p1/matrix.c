@@ -92,7 +92,7 @@ void zero_row(Matrix matrix, int k){
     int z = 0;
     while(z < k){
       int i = rand()/(RAND_MAX/matrix.m);
-      if(matrix.mtx[r][i] > 0 && matrix.mtx[r][i] <= 1){
+      if(matrix.mtx[r][i] > 0 && matrix.mtx[r][i] < 1){
 	matrix.mtx[r][i] = 0;
 	z++;
       }
@@ -137,7 +137,7 @@ CCS init_CCS(int val_size, int col_size){
 }
 
 CCS cp_ccs(Matrix matrix){
-  CCS ccs = init_CCS(non_zero(matrix)+1, matrix.n);
+  CCS ccs = init_CCS(non_zero(matrix), matrix.n+1);
   
   int val_num = 0;
   int f_in_col = 1;
@@ -157,6 +157,8 @@ CCS cp_ccs(Matrix matrix){
     }
     f_in_col = 1;
   }
+  
+  ccs.col_ptr[matrix.n]=ccs.val_size;
   
   return ccs;
 }

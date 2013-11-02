@@ -11,27 +11,36 @@ int main(){
     exit(1);
   }
   
-  //Mutliplication
-  Vector vector = gen_vector(3, 1, 2);
-  Matrix mtx = init_matrix(3, 3);
-  f2(mtx,1,0,0);
-  print_matrix(mtx);
-  CRS crs = cp_crs(mtx);
+  //TESTING
+  //TEST - COMPRESS AND DECOMPRESS
+  Matrix test_mtx_1 = init_matrix(10,10);
+  f2(test_mtx_1,1,1,2);
+  Matrix test_mtx_2 = copy_matrix(test_mtx_1);
+  test(assert_matrix(test_mtx_1, test_mtx_2), "copy matrix");
   
-  print_crs(crs);
-  print_vector(vector);
-  Vector product = mtp_crs(crs, vector);
-  print_vector(product);
+  CRS test_crs_1 = cp_crs(test_mtx_1);
+  CCS test_ccs_1 = cp_ccs(test_mtx_2);
   
-  //Testing
-  CRS crs2 = copy_crs(crs);
-  crs2.val[0] = 1000;
-  if(assert_crs(crs, crs2))
-    print_crs(crs2);
+  Matrix test_ucp_mtx_1 = uncp_crs(test_crs_1);
+  Matrix test_ucp_mtx_2 = uncp_ccs(test_ccs_1);
+  test(assert_matrix(test_ucp_mtx_1, test_ucp_mtx_2), "decompress matrix");
   
-  CCS ccs = cp_ccs(mtx);
-  print_ccs(ccs);
-  Vector ccs_product = mtp_ccs(ccs, vector);
+  //TEST - MULTIPLICATION
+  Matrix test_mtx_mtp_1 = init_matrix(10,10);
+  f2(test_mtx_mtp_1,1,1,3);
+  Matrix test_mtx_mtp_2 = copy_matrix(test_mtx_mtp_1);
+  
+  Vector test_vector_mtp = gen_vector(10, 0.1, 1);
+  
+  CRS test_mtp_crs = cp_crs(test_mtx_mtp_1);
+  CCS test_mtp_ccs = cp_ccs(test_mtx_mtp_2);
+  
+  Vector test_vector_crs = mtp_crs(test_mtp_crs, test_vector_mtp);
+  Vector test_vector_ccs = mtp_ccs(test_mtp_ccs, test_vector_mtp);
+  
+  //FALSE POSITIVE! NULL == NULL!
+  test(assert_vector(test_vector_crs, test_vector_crs), "product matrix");
+
   
   return 0;
 }

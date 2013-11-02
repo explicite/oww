@@ -4,5 +4,5 @@ typedef struct {
 } Vector;
 
 Vector init_vector(int);
-Vector gen_vector(int,int,int);
+Vector gen_vector(int,double,double);
 void print_vector(Vector);

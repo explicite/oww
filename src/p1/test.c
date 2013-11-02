@@ -54,3 +54,10 @@ int assert_crs(CRS c1, CRS c2){
   }
   return 1;
 }
+
+void test(int assert, const char* desc){
+  if(assert)
+    printf("Test %s succed!\n", desc);
+  else
+    printf("Test %s failed!\n", desc);
+}

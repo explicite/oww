@@ -19,7 +19,7 @@ void print_vector(Vector vector){
       printf("%f\n", vector.v[i]);
 }
 
-Vector gen_vector(int size, int min, int max){
+Vector gen_vector(int size, double min, double max){
   Vector vector = init_vector(size);
   
   for(int i = 0; i < vector.size; i++)
