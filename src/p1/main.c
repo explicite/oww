@@ -39,7 +39,7 @@ int main(){
   Vector test_vector_ccs = mtp_ccs(test_mtp_ccs, test_vector_mtp);
   
   //FALSE POSITIVE! NULL == NULL!
-  test(assert_vector(test_vector_crs, test_vector_crs), "product matrix");
+  test(assert_vector(test_vector_crs, test_vector_ccs), "product matrix");
 
   
   return 0;

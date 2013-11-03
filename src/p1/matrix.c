@@ -163,6 +163,12 @@ CCS cp_ccs(Matrix matrix){
   return ccs;
 }
 
+int find_m_ccs(CCS ccs){
+}
+
+int find_n_ccs(CCS ccs){
+}
+
 Matrix uncp_ccs(CCS ccs){
   //TODO
 }
@@ -223,7 +229,11 @@ CCS copy_ccs(CCS oryg){
 
 Vector mtp_ccs(CCS ccs, Vector vector){
   Vector product = init_vector(vector.size);
-  //TODO
+ 
+  for(int i = 0; i < vector.size; i++)
+    for(int j = ccs.col_ptr[i]; j < ccs.col_ptr[i+1]; j++)
+      product.v[ccs.row_ind[j]] += ccs.val[j] * vector.v[i]; 
+ 
   return product;
 }
 
@@ -263,6 +273,12 @@ CRS cp_crs(Matrix matrix){
   crs.row_ptr[matrix.m]=crs.val_size;
   
   return crs;
+}
+
+int find_m_crs(CRS crs){
+}
+
+int find_n_crs(CRS crs){
 }
 
 Matrix uncp_crs(CRS crs){
@@ -328,7 +344,18 @@ Vector mtp_crs(CRS crs, Vector vector){
   
   for(int i = 0; i < vector.size; i++)
     for(int j = crs.row_ptr[i]; j < crs.row_ptr[i+1]; j++)
-      product.v[i] = product.v[i] + crs.val[j] * vector.v[crs.col_ind[j]];
+      product.v[i] += crs.val[j] * vector.v[crs.col_ind[j]];
   
   return product;
+}
+
+//Util
+int max_int(int* array, int size){
+  int max = array[0];
+  
+  for(int i = 1; i < size; i++)
+    if(array[i] > max)
+      max = array[i];
+  
+  return max;
 }

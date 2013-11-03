@@ -34,6 +34,8 @@ int non_zero(Matrix);
 //CSS
 CCS init_CCS(int, int);
 CCS cp_ccs(Matrix);
+int find_m_ccs(CCS);
+int find_n_ccs(CCS);
 Matrix uncp_ccs(CCS);
 void fprint_ccs(CCS, FILE*);
 void print_ccs(CCS);
@@ -43,8 +45,13 @@ Vector mtp_ccs(CCS, Vector);
 //CRS
 CRS init_CRS(int, int);
 CRS cp_crs(Matrix);
+int find_m_crs(CRS);
+int find_n_crs(CRS);
 Matrix uncp_crs(CRS);
 void fprint_crs(CRS, FILE*);
 void print_crs(CRS);
 CRS copy_crs(CRS);
 Vector mtp_crs(CRS, Vector);
+
+//Util
+int max_int(int*,int);
