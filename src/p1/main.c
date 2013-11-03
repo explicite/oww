@@ -23,6 +23,11 @@ int main(){
   
   Matrix test_ucp_mtx_1 = uncp_crs(test_crs_1);
   Matrix test_ucp_mtx_2 = uncp_ccs(test_ccs_1);
+  
+  test(assert_matrix(test_ucp_mtx_1, test_mtx_1), "decompress crs");
+  
+  test(assert_matrix(test_ucp_mtx_2, test_mtx_2), "decompress ccs");
+  
   test(assert_matrix(test_ucp_mtx_1, test_ucp_mtx_2), "decompress matrix");
   
   //TEST - MULTIPLICATION
@@ -38,7 +43,6 @@ int main(){
   Vector test_vector_crs = mtp_crs(test_mtp_crs, test_vector_mtp);
   Vector test_vector_ccs = mtp_ccs(test_mtp_ccs, test_vector_mtp);
   
-  //FALSE POSITIVE! NULL == NULL!
   test(assert_vector(test_vector_crs, test_vector_ccs), "product matrix");
 
   

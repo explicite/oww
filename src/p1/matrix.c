@@ -163,14 +163,14 @@ CCS cp_ccs(Matrix matrix){
   return ccs;
 }
 
-int find_m_ccs(CCS ccs){
-}
-
-int find_n_ccs(CCS ccs){
-}
-
 Matrix uncp_ccs(CCS ccs){
-  //TODO
+   Matrix mtx = init_matrix(ccs.col_size-1,ccs.col_size-1);
+   
+   for(int i = 0; i < ccs.col_size-1; i++)
+    for(int j = ccs.col_ptr[i]; j < ccs.col_ptr[i+1]; j++)
+      mtx.mtx[ccs.row_ind[j]][i] = ccs.val[j]; 
+      
+  return mtx;
 }
 
 void fprint_ccs(CCS ccs, FILE* f){
@@ -275,14 +275,14 @@ CRS cp_crs(Matrix matrix){
   return crs;
 }
 
-int find_m_crs(CRS crs){
-}
-
-int find_n_crs(CRS crs){
-}
-
 Matrix uncp_crs(CRS crs){
-  //TODO
+  Matrix mtx = init_matrix(crs.row_num-1,crs.row_num-1);
+  
+  for(int i = 0; i < crs.row_num-1; i++)
+    for(int j = crs.row_ptr[i]; j < crs.row_ptr[i+1]; j++)
+      mtx.mtx[i][crs.col_ind[j]] = crs.val[j];
+  
+ return mtx;
 }
 
 void fprint_crs(CRS crs, FILE* f){
