@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -std=c99
-PROJ1_DIR = "./src/p1"
+CFLAGS = -O3 -std=c99
+PROJ1_DIR = "./src"
 OUT_DIR = "./out"
 
 all: mk_out random vector compres matrix test main app
@@ -17,6 +17,9 @@ app:
 main:
 	$(CC) $(CFLAGS) -c $(PROJ1_DIR)/main.c -o $(OUT_DIR)/main.o
 
+stoper:
+	$(CC) $(CFLAGS) -c $(PROJ1_DIR)/stoper.c -o $(OUT_DIR)/stoper.o
+	
 test: 
 	$(CC) $(CFLAGS) -c $(PROJ1_DIR)/test.c -o $(OUT_DIR)/test.o
 

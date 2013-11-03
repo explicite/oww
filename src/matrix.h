@@ -1,11 +1,15 @@
 #include <stdio.h>
+
 #include "vector.h"
 #include "compres.h"
 
-typedef struct {
+typedef struct 
+{
+
   double** mtx;
   int m;
   int n;
+  
 } Matrix;
 
 Matrix init_matrix(int, int);

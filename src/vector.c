@@ -1,10 +1,13 @@
-#include "vector.h"
-#include "random.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 
-Vector init_vector(int size){
+#include "vector.h"
+#include "random.h"
+
+Vector init_vector(int size)
+{
+
   srand(time(NULL));
   Vector vector;
   vector.size = size;
@@ -14,12 +17,17 @@ Vector init_vector(int size){
   return vector;
 }
 
-void print_vector(Vector vector){
+void print_vector(Vector vector)
+{
+
   for(int i = 0; i < vector.size; i++)
       printf("%f\n", vector.v[i]);
+ 
 }
 
-Vector gen_vector(int size, double min, double max){
+Vector gen_vector(int size, double min, double max)
+{
+
   Vector vector = init_vector(size);
   
   for(int i = 0; i < vector.size; i++)
