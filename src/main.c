@@ -1,11 +1,13 @@
-#include "matrix.h"
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "matrix.h"
+#include "stoper.h"
+
 int main()
 {
-  
-  FILE *f;
+ 
+  /*FILE *f;
   char fn[] = "data.txt";
   f = fopen(fn, "w");
   
@@ -13,7 +15,7 @@ int main()
   {
     printf("Error: FILE!\n");
     exit(1);
-  }
+  }*/
   
   //TESTING
   //TEST - COMPRESS AND DECOMPRESS
@@ -49,6 +51,23 @@ int main()
   
   test(assert_vector(test_vector_crs, test_vector_ccs), "product matrix");
 
+  //TEST - SPEED
+  Matrix mtx_speed = init_matrix(5000,5000);
+  f2(mtx_speed,1,1,2);
+  
+  CRS crs_speed = cp_crs(mtx_speed);
+  CCS ccs_speed = cp_ccs(mtx_speed);
+  
+  Vector vector_speed = gen_vector(5000, 0.1, 1);
+  init_stoper();
+  mtp_crs(crs_speed, vector_speed);
+  print_stoper();
+  
+  init_stoper();
+  mtp_ccs(ccs_speed, vector_speed);
+  print_stoper();
+  
+  
   
   return 0;
 }
