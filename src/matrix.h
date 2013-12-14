@@ -60,3 +60,16 @@ Vector* mpi_mtp_crs(CRS*, Vector*);
 
 //Util
 int max_int(int*,int);
+
+//pthread
+typedef struct
+{
+ 
+  int thread_id;
+  CRS* crs;
+  Vector* vector;
+  Vector* product;
+  
+} CRS_Slice;
+
+void* mpi_mtp_crs_slice(void*);

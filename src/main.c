@@ -42,8 +42,6 @@ int main()
   
   test(assert_matrix(test_ucp_mtx_1, test_ucp_mtx_2), "decompress matrix");
   
-
-  
   //TEST - MULTIPLICATION
   Matrix* test_mtx_mtp_1 = init_matrix(10,10);
   f2(test_mtx_mtp_1,1,1,3);

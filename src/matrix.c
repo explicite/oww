@@ -5,6 +5,7 @@
 #include <pthread.h>
 
 #define CHUNKSIZE 100
+#define THREAD_NUM 4
 
 Matrix* init_matrix(int m, int n)
 {
@@ -115,14 +116,16 @@ void free_matrix(Matrix* matrix)
   free(matrix);
 }
 
-void free_ccs(CCS* ccs){
+void free_ccs(CCS* ccs)
+{
   free(ccs->val);
   free(ccs->row_ind);
   free(ccs->col_ptr);
   free(ccs);
 }
 
-void free_crs(CRS* crs){
+void free_crs(CRS* crs)
+{
   free(crs->val);
   free(crs->col_ind);
   free(crs->row_ptr);
@@ -422,6 +425,7 @@ CRS* copy_crs(CRS* oryg)
 
 Vector* mtp_crs(CRS* crs, Vector* vector)
 {
+  
   Vector* product = init_vector(vector->size);
  
   for(int i = 0; i < vector->size; i++)
@@ -436,7 +440,7 @@ Vector* openmp_mtp_crs(CRS* crs, Vector* vector)
 
   Vector* product = init_vector(vector->size);
   
-  #pragma omp parallel for schedule(dynamic, CHUNKSIZE) num_threads(4)
+  #pragma omp parallel for schedule(dynamic, CHUNKSIZE) num_threads(THREAD_NUM)
   for(int i = 0; i < vector->size; i++)
     for(int j = crs->row_ptr[i]; j < crs->row_ptr[i+1]; j++)
       product->v[i] += crs->val[j] * vector->v[crs->col_ind[j]];
@@ -446,22 +450,36 @@ Vector* openmp_mtp_crs(CRS* crs, Vector* vector)
 
 Vector* pthread_mtp_crs(CRS* crs, Vector* vector)
 {
+  
+  pthread_t* threads = (pthread_t*) malloc(sizeof(pthread_t)*THREAD_NUM);
+  
   Vector* product = init_vector(vector->size);
- 
-  for(int i = 0; i < vector->size; i++)
-    for(int j = crs->row_ptr[i]; j < crs->row_ptr[i+1]; j++)
-      product->v[i] += crs->val[j] * vector->v[crs->col_ind[j]];
+  
+  CRS_Slice* slice = (CRS_Slice*) malloc(sizeof(CRS_Slice)*THREAD_NUM);
+  for(int i = 0; i < THREAD_NUM; i++){
+    slice[i].thread_id = i;
+    slice[i].crs = crs;
+    slice[i].vector = vector;
+    slice[i].product = product;
+  }
+  
+  for(int i = 0; i < THREAD_NUM; i++)
+    pthread_create(&threads[i], NULL, mpi_mtp_crs_slice, (void*) &slice[i]);
+  
+  for(int i = 0; i < THREAD_NUM; i++)
+    pthread_join(threads[i], NULL);
+  
+  free(threads);
+  free(slice);
   
   return product;
 }
 
 Vector* mpi_mtp_crs(CRS* crs, Vector* vector)
 {
+
   Vector* product = init_vector(vector->size);
- 
-  for(int i = 0; i < vector->size; i++)
-    for(int j = crs->row_ptr[i]; j < crs->row_ptr[i+1]; j++)
-      product->v[i] += crs->val[j] * vector->v[crs->col_ind[j]];
+  //TODO  
   
   return product;
 }
@@ -477,4 +495,16 @@ int max_int(int* array, int size)
       max = array[i];
   
   return max;
+}
+
+//pthread
+void* mpi_mtp_crs_slice(void* s){
+  CRS_Slice* slice = (CRS_Slice*) s;
+  int start = (slice->thread_id*slice->vector->size)/THREAD_NUM;
+  int stop = ((slice->thread_id+1)*slice->vector->size)/THREAD_NUM;
+  
+  for(int i = start; i < stop; i++)
+    for(int j = slice->crs->row_ptr[i]; j < slice->crs->row_ptr[i+1]; j++)
+      slice->product->v[i] += slice->crs->val[j] * slice->vector->v[slice->crs->col_ind[j]];
+    
 }
