@@ -1,5 +1,5 @@
-CC = gcc
-CFLAGS = -std=c99 -O3 
+CC = cc
+CFLAGS = -std=c99 -fopenmp -pthread -O3 
 PROJ1_DIR = "./src"
 OUT_DIR = "./out"
 
@@ -28,7 +28,7 @@ compres:
 	$(CC) -c $(CFLAGS) $(PROJ1_DIR)/compres.c  -o $(OUT_DIR)/compres.o
 
 matrix: 
-	$(CC) -c $(CFLAGS) $(PROJ1_DIR)/matrix.c  -o $(OUT_DIR)/matrix.o
+	$(CC) -c $(CFLAGS)  $(PROJ1_DIR)/matrix.c  -o $(OUT_DIR)/matrix.o
 
 vector: 
 	$(CC) -c $(CFLAGS) $(PROJ1_DIR)/vector.c  -o $(OUT_DIR)/vector.o

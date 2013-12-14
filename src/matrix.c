@@ -2,6 +2,9 @@
 #include "random.h"
 #include <stdlib.h>
 #include <time.h>
+#include <pthread.h>
+
+#define CHUNKSIZE 100
 
 Matrix* init_matrix(int m, int n)
 {
@@ -102,9 +105,28 @@ void f4(Matrix* matrix, int k, int w, int z)
 }
 
 //Clean up
-void clean(Matrix* matrix)
-{
+void free_matrix(Matrix* matrix)
+{  
+  for(int i = 0; i < matrix->m; i++)
+    free(matrix->mtx[i]);
+  
+  free(matrix->mtx);
+  
   free(matrix);
+}
+
+void free_ccs(CCS* ccs){
+  free(ccs->val);
+  free(ccs->row_ind);
+  free(ccs->col_ptr);
+  free(ccs);
+}
+
+void free_crs(CRS* crs){
+  free(crs->val);
+  free(crs->col_ind);
+  free(crs->row_ptr);
+  free(crs);
 }
 
 //Zero row
@@ -400,9 +422,43 @@ CRS* copy_crs(CRS* oryg)
 
 Vector* mtp_crs(CRS* crs, Vector* vector)
 {
+  Vector* product = init_vector(vector->size);
+ 
+  for(int i = 0; i < vector->size; i++)
+    for(int j = crs->row_ptr[i]; j < crs->row_ptr[i+1]; j++)
+      product->v[i] += crs->val[j] * vector->v[crs->col_ind[j]];
+  
+  return product;
+}
+
+Vector* openmp_mtp_crs(CRS* crs, Vector* vector)
+{
 
   Vector* product = init_vector(vector->size);
   
+  #pragma omp parallel for schedule(dynamic, CHUNKSIZE) num_threads(4)
+  for(int i = 0; i < vector->size; i++)
+    for(int j = crs->row_ptr[i]; j < crs->row_ptr[i+1]; j++)
+      product->v[i] += crs->val[j] * vector->v[crs->col_ind[j]];
+  
+  return product;
+}
+
+Vector* pthread_mtp_crs(CRS* crs, Vector* vector)
+{
+  Vector* product = init_vector(vector->size);
+ 
+  for(int i = 0; i < vector->size; i++)
+    for(int j = crs->row_ptr[i]; j < crs->row_ptr[i+1]; j++)
+      product->v[i] += crs->val[j] * vector->v[crs->col_ind[j]];
+  
+  return product;
+}
+
+Vector* mpi_mtp_crs(CRS* crs, Vector* vector)
+{
+  Vector* product = init_vector(vector->size);
+ 
   for(int i = 0; i < vector->size; i++)
     for(int j = crs->row_ptr[i]; j < crs->row_ptr[i+1]; j++)
       product->v[i] += crs->val[j] * vector->v[crs->col_ind[j]];

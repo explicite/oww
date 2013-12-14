@@ -25,7 +25,9 @@ void f3(Matrix*, int);
 void f4(Matrix*, int, int, int);
 
 //Clean up
-void clean(Matrix*);
+void free_matrix(Matrix*);
+void free_ccs(CCS*);
+void free_crs(CRS*);
 
 //Zero row
 void zero_row(Matrix*, int);
@@ -52,6 +54,9 @@ void fprint_crs(CRS*, FILE*);
 void print_crs(CRS*);
 CRS* copy_crs(CRS*);
 Vector* mtp_crs(CRS*, Vector*);
+Vector* openmp_mtp_crs(CRS*, Vector*);
+Vector* pthread_mtp_crs(CRS*, Vector*);
+Vector* mpi_mtp_crs(CRS*, Vector*);
 
 //Util
 int max_int(int*,int);

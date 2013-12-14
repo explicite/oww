@@ -42,6 +42,8 @@ int main()
   
   test(assert_matrix(test_ucp_mtx_1, test_ucp_mtx_2), "decompress matrix");
   
+
+  
   //TEST - MULTIPLICATION
   Matrix* test_mtx_mtp_1 = init_matrix(10,10);
   f2(test_mtx_mtp_1,1,1,3);
@@ -64,14 +66,46 @@ int main()
   CRS* crs_speed = cp_crs(mtx_speed);
   CCS* ccs_speed = cp_ccs(mtx_speed);
   
+  //CLEAN
+  free_matrix(mtx_speed);
+
   Vector* vector_speed = gen_vector(5000, 0.1, 1);
-  init_stoper();
-  mtp_crs(crs_speed, vector_speed);
-  print_stoper();
   
   init_stoper();
   mtp_ccs(ccs_speed, vector_speed);
   print_stoper();
+  
+  printf("standard crs product\n");
+  init_stoper();
+  mtp_crs(crs_speed, vector_speed);
+  print_stoper();
+  
+  CRS* openmp_crs_speed = copy_crs(crs_speed);  	
+  printf("openmp crs product\n");
+  init_stoper();
+  openmp_mtp_crs(openmp_crs_speed, vector_speed);
+  print_stoper();
+  
+  //CLEAN
+  free_crs(openmp_crs_speed);
+  
+  CRS* pthread_crs_speed = copy_crs(crs_speed);
+  printf("pthread crs product\n");
+  init_stoper();
+  pthread_mtp_crs(pthread_crs_speed, vector_speed);
+  print_stoper();
+  
+  //CLEAN
+  free_crs(pthread_crs_speed);
+  
+  CRS* mpi_crs_speed = copy_crs(crs_speed);
+  printf("mpi crs product\n");
+  init_stoper();
+  mpi_mtp_crs(mpi_crs_speed, vector_speed);
+  print_stoper();
+  
+  //CLEAN
+  free_crs(mpi_crs_speed);
   
   return 0;
 }
