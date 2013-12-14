@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -std=c99  
+CFLAGS = -std=c99 -O3 
 PROJ1_DIR = "./src"
 OUT_DIR = "./out"
 

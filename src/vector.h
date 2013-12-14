@@ -3,6 +3,6 @@ typedef struct {
   int size;
 } Vector;
 
-Vector init_vector(int);
-Vector gen_vector(int,double,double);
-void print_vector(Vector);
+Vector* init_vector(int);
+Vector* gen_vector(int,double,double);
+void print_vector(const Vector*);
