@@ -69,17 +69,18 @@ int main()
 
   Vector* vector_speed = gen_vector(5000, 0.1, 1);
   
+  printf("\nSpeed test\n");
   init_stoper();
   mtp_ccs(ccs_speed, vector_speed);
   print_stoper();
   
-  printf("standard crs product\n");
+  printf("\nstandard crs product\n");
   init_stoper();
   mtp_crs(crs_speed, vector_speed);
   print_stoper();
   
   CRS* openmp_crs_speed = copy_crs(crs_speed);  	
-  printf("openmp crs product\n");
+  printf("\nopenmp crs product\n");
   init_stoper();
   openmp_mtp_crs(openmp_crs_speed, vector_speed);
   print_stoper();
@@ -88,7 +89,7 @@ int main()
   free_crs(openmp_crs_speed);
   
   CRS* pthread_crs_speed = copy_crs(crs_speed);
-  printf("pthread crs product\n");
+  printf("\npthread crs product\n");
   init_stoper();
   pthread_mtp_crs(pthread_crs_speed, vector_speed);
   print_stoper();
@@ -97,7 +98,7 @@ int main()
   free_crs(pthread_crs_speed);
   
   CRS* mpi_crs_speed = copy_crs(crs_speed);
-  printf("mpi crs product\n");
+  printf("\nmpi crs product\n");
   init_stoper();
   mpi_mtp_crs(mpi_crs_speed, vector_speed);
   print_stoper();

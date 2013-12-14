@@ -464,7 +464,7 @@ Vector* pthread_mtp_crs(CRS* crs, Vector* vector)
   }
   
   for(int i = 0; i < THREAD_NUM; i++)
-    pthread_create(&threads[i], NULL, mpi_mtp_crs_slice, (void*) &slice[i]);
+    pthread_create(&threads[i], NULL, pthread_mtp_crs_slice, (void*) &slice[i]);
   
   for(int i = 0; i < THREAD_NUM; i++)
     pthread_join(threads[i], NULL);
@@ -498,7 +498,7 @@ int max_int(int* array, int size)
 }
 
 //pthread
-void* mpi_mtp_crs_slice(void* s){
+void* pthread_mtp_crs_slice(void* s){
   CRS_Slice* slice = (CRS_Slice*) s;
   int start = (slice->thread_id*slice->vector->size)/THREAD_NUM;
   int stop = ((slice->thread_id+1)*slice->vector->size)/THREAD_NUM;

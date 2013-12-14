@@ -72,4 +72,4 @@ typedef struct
   
 } CRS_Slice;
 
-void* mpi_mtp_crs_slice(void*);
+void* pthread_mtp_crs_slice(void*);
