@@ -25,6 +25,7 @@ void f3(Matrix*, int);
 void f4(Matrix*, int, int, int);
 
 //Clean up
+void free_vector(Vector*);
 void free_matrix(Matrix*);
 void free_ccs(CCS*);
 void free_crs(CRS*);

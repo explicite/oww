@@ -15,7 +15,7 @@ Matrix* init_matrix(int m, int n)
   matrix->m = m;
   matrix->n = n;
   
-  double** mtx;
+  double** mtx = NULL;
   matrix->mtx = (double**) malloc(m*sizeof(double));
   for(int i = 0; i < m; i++)
     matrix->mtx[i] = (double*) malloc(n*sizeof(double));
@@ -66,8 +66,8 @@ Matrix* copy_matrix(Matrix* org)
 //Sparse matrix initializers
 void band(Matrix* matrix, int k, int w)
 {
-  
-  for(int i = 0; i < matrix->m; i++){
+  for(int i = 0; i < matrix->m; i++)
+  {
     for(int j = 0; j < matrix->n; j++)
     {
       if(j <= (w+i+k) && j >= (w+i-k))
@@ -106,6 +106,12 @@ void f4(Matrix* matrix, int k, int w, int z)
 }
 
 //Clean up
+void free_vector(Vector* vector)
+{
+  free(vector->v);
+  free(vector);
+}
+
 void free_matrix(Matrix* matrix)
 {  
   for(int i = 0; i < matrix->m; i++)
@@ -466,7 +472,7 @@ Vector* pthread_mtp_crs(CRS* crs, Vector* vector)
   for(int i = 0; i < THREAD_NUM; i++)
     pthread_create(&threads[i], NULL, pthread_mtp_crs_slice, (void*) &slice[i]);
   
-  for(int i = 0; i < THREAD_NUM; i++)
+  for(	int i = 0; i < THREAD_NUM; i++)
     pthread_join(threads[i], NULL);
   
   free(threads);

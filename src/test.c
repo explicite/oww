@@ -71,8 +71,8 @@ void test(int assert, const char* desc)
 {
 
   if(assert)
-    printf("Test %s succed!\n", desc);
+    printf("Test: %s succed!\n", desc);
   else
-    printf("Test %s failed!\n", desc);
+    printf("Test: %s failed!\n", desc);
 
 }
