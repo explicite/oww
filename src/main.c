@@ -9,7 +9,6 @@ void test(int assert, const char* desc);
 int assert_matrix(Matrix* m1, Matrix* m2);
 int assert_vector(Vector* v1, Vector* v2);
 
-
 int main()
 {
  
@@ -49,8 +48,8 @@ int main()
   free_crs(test_crs_1);
   free_matrix(test_ucp_mtx_1);
   free_matrix(test_ucp_mtx_2);
-  
-  /*_________________________________________________________________________________*/
+  /*
+  //_________________________________________________________________________________
   
   //TEST - MULTIPLICATION
   Matrix* test_mtx_mtp_1 = init_matrix(10,10);
@@ -76,7 +75,7 @@ int main()
   free_vector(test_vector_crs);
   free_vector(test_vector_ccs);
   
-  /*_________________________________________________________________________________*/
+  //_________________________________________________________________________________
   
   //TEST - SPEED
   Matrix* mtx_speed = init_matrix(10,10);
@@ -145,6 +144,6 @@ int main()
   //TEST MPI CLEAN
   free_crs(mpi_crs_speed);
   free_vector(mpi_mtp_crs_product);
-  
+  */
   return 0;
 }

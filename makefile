@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -std=c99 -fopenmp -pthread -O3 
+CFLAGS = -fopenmp -pthread -O3 
 PROJ1_DIR = "./src"
 OUT_DIR = "./out"
 

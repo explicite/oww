@@ -22,7 +22,8 @@ Vector* init_vector(int size)
 void print_vector(const Vector* vector)
 {
 
-  for(int i = 0; i < vector->size; i++)
+  register int i;
+  for(i = 0; i < vector->size; i++)
       printf("%f\n", vector->v[i]);
  
 }
@@ -32,7 +33,8 @@ Vector* gen_vector(int size, double min, double max)
 
   Vector* vector = init_vector(size);
   
-  for(int i = 0; i < vector->size; i++)
+  register int i;
+  for(i = 0; i < vector->size; i++)
     vector->v[i] = next(min, max);
   
   return vector;
