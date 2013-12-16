@@ -23,7 +23,7 @@ Matrix* init_matrix(int m, int n)
   return matrix;
 }
 
-void fprint_matrix(Matrix* matrix, FILE* f)
+void fprint_matrix(const Matrix* matrix, FILE* f)
 {
   
   for(int i = 0; i < matrix->m; i++)
@@ -37,7 +37,7 @@ void fprint_matrix(Matrix* matrix, FILE* f)
   
 }
 
-void print_matrix(Matrix* matrix)
+void print_matrix(const Matrix* matrix)
 {
   
   for(int i = 0; i < matrix->m; i++)
@@ -51,7 +51,7 @@ void print_matrix(Matrix* matrix)
   
 }
 
-Matrix* copy_matrix(Matrix* org)
+Matrix* copy_matrix(const Matrix* org)
 {
   
   Matrix* copy = init_matrix(org->m, org->n);
@@ -105,39 +105,6 @@ void f4(Matrix* matrix, int k, int w, int z)
   zero_collumn(matrix, z);
 }
 
-//Clean up
-void free_vector(Vector* vector)
-{
-  free(vector->v);
-  free(vector);
-}
-
-void free_matrix(Matrix* matrix)
-{  
-  for(int i = 0; i < matrix->m; i++)
-    free(matrix->mtx[i]);
-  
-  free(matrix->mtx);
-  
-  free(matrix);
-}
-
-void free_ccs(CCS* ccs)
-{
-  free(ccs->val);
-  free(ccs->row_ind);
-  free(ccs->col_ptr);
-  free(ccs);
-}
-
-void free_crs(CRS* crs)
-{
-  free(crs->val);
-  free(crs->col_ind);
-  free(crs->row_ptr);
-  free(crs);
-}
-
 //Zero row
 void zero_row(Matrix* matrix, int k)
 {
@@ -175,7 +142,7 @@ void zero_collumn(Matrix* matrix, int k)
 }
 
 //Non zero
-int non_zero(Matrix* matrix)
+int non_zero(const Matrix* matrix)
 {
   int z = 0;
   for(int i = 0; i < matrix->m; i++)
@@ -200,7 +167,7 @@ CCS* init_CCS(int val_size, int col_size)
   return ccs;
 }
 
-CCS* cp_ccs(Matrix* matrix)
+CCS* cp_ccs(const Matrix* matrix)
 {
 
   CCS* ccs = init_CCS(non_zero(matrix), matrix->n+1);
@@ -233,7 +200,7 @@ CCS* cp_ccs(Matrix* matrix)
   return ccs;
 }
 
-Matrix* uncp_ccs(CCS* ccs)
+Matrix* uncp_ccs(const CCS* ccs)
 {
    Matrix* mtx = init_matrix(ccs->col_size-1,ccs->col_size-1);
    
@@ -244,7 +211,7 @@ Matrix* uncp_ccs(CCS* ccs)
   return mtx;
 }
 
-void fprint_ccs(CCS* ccs, FILE* f)
+void fprint_ccs(const CCS* ccs, FILE* f)
 {
   
   for(int i = 0; i < ccs->val_size; i++)
@@ -264,7 +231,7 @@ void fprint_ccs(CCS* ccs, FILE* f)
   
 }
 
-void print_ccs(CCS* ccs)
+void print_ccs(const CCS* ccs)
 {
 
   for(int i = 0; i < ccs->val_size; i++)
@@ -284,7 +251,7 @@ void print_ccs(CCS* ccs)
   
 }
 
-CCS* copy_ccs(CCS* oryg)
+CCS* copy_ccs(const CCS* oryg)
 {
 
   CCS* ccs = init_CCS(oryg->val_size, oryg->col_size);
@@ -301,7 +268,7 @@ CCS* copy_ccs(CCS* oryg)
   return ccs;
 }
 
-Vector* mtp_ccs(CCS* ccs, Vector* vector)
+Vector* mtp_ccs(const CCS* ccs, const Vector* vector)
 {
 
   Vector* product = init_vector(vector->size);
@@ -310,6 +277,42 @@ Vector* mtp_ccs(CCS* ccs, Vector* vector)
     for(int j = ccs->col_ptr[i]; j < ccs->col_ptr[i+1]; j++)
       product->v[ccs->row_ind[j]] += ccs->val[j] * vector->v[i]; 
  
+  return product;
+}
+
+Vector* openmp_mtp_ccs(const CCS* ccs, const Vector* vector)
+{
+  
+  Vector* product = init_vector(vector->size);
+  //TODO
+  
+  return product;
+}
+
+Vector* pthread_mtp_ccs(const CCS* ccs, const Vector* vector)
+{
+  
+  Vector* product = init_vector(vector->size);
+  //TODO
+  
+  return product;
+}
+
+Vector* mpi_mtp_ccs(const CCS* ccs, const Vector* vector)
+{
+  
+  Vector* product = init_vector(vector->size);
+  //TODO
+  
+  return product;
+}
+
+Vector* opencl_mtp_ccs(const CCS* ccs, const Vector* vector)
+{
+  
+  Vector* product = init_vector(vector->size);
+  //TODO
+  
   return product;
 }
 
@@ -327,7 +330,7 @@ CRS* init_CRS(int val_size, int row_num)
   return crs;
 }
 
-CRS* cp_crs(Matrix* matrix)
+CRS* cp_crs(const Matrix* matrix)
 {
 
   CRS* crs = init_CRS(non_zero(matrix), matrix->m+1);
@@ -360,7 +363,7 @@ CRS* cp_crs(Matrix* matrix)
   return crs;
 }
 
-Matrix* uncp_crs(CRS* crs)
+Matrix* uncp_crs(const CRS* crs)
 {
 
   Matrix* mtx = init_matrix(crs->row_num-1,crs->row_num-1);
@@ -372,7 +375,7 @@ Matrix* uncp_crs(CRS* crs)
  return mtx;
 }
 
-void fprint_crs(CRS* crs, FILE* f)
+void fprint_crs(const CRS* crs, FILE* f)
 {
 
   for(int i = 0; i < crs->val_size; i++)
@@ -392,7 +395,7 @@ void fprint_crs(CRS* crs, FILE* f)
   
 }
 
-void print_crs(CRS* crs)
+void print_crs(const CRS* crs)
 {
 
   for(int i = 0; i < crs->val_size; i++)
@@ -412,7 +415,7 @@ void print_crs(CRS* crs)
   
 }
 
-CRS* copy_crs(CRS* oryg)
+CRS* copy_crs(const CRS* oryg)
 {
 
   CRS* crs = init_CRS(oryg->val_size, oryg->row_num);
@@ -429,7 +432,7 @@ CRS* copy_crs(CRS* oryg)
   return crs;
 }
 
-Vector* mtp_crs(CRS* crs, Vector* vector)
+Vector* mtp_crs(const CRS* crs, const Vector* vector)
 {
   
   Vector* product = init_vector(vector->size);
@@ -441,7 +444,7 @@ Vector* mtp_crs(CRS* crs, Vector* vector)
   return product;
 }
 
-Vector* openmp_mtp_crs(CRS* crs, Vector* vector)
+Vector* openmp_mtp_crs(const CRS* crs, const Vector* vector)
 {
 
   Vector* product = init_vector(vector->size);
@@ -481,11 +484,20 @@ Vector* pthread_mtp_crs(CRS* crs, Vector* vector)
   return product;
 }
 
-Vector* mpi_mtp_crs(CRS* crs, Vector* vector)
+Vector* mpi_mtp_crs(const CRS* crs, const Vector* vector)
 {
 
   Vector* product = init_vector(vector->size);
   //TODO  
+  
+  return product;
+}
+
+Vector* opencl_mtp_crs(const CRS* crs, const Vector* vector)
+{
+ 
+  Vector* product = init_vector(vector->size);
+  //TODO
   
   return product;
 }
@@ -513,4 +525,37 @@ void* pthread_mtp_crs_slice(void* s){
     for(int j = slice->crs->row_ptr[i]; j < slice->crs->row_ptr[i+1]; j++)
       slice->product->v[i] += slice->crs->val[j] * slice->vector->v[slice->crs->col_ind[j]];
     
+}
+
+//Clean up
+void free_vector(Vector* vector)
+{
+  free(vector->v);
+  free(vector);
+}
+
+void free_matrix(Matrix* matrix)
+{  
+  for(int i = 0; i < matrix->m; i++)
+    free(matrix->mtx[i]);
+  
+  free(matrix->mtx);
+  
+  free(matrix);
+}
+
+void free_ccs(CCS* ccs)
+{
+  free(ccs->val);
+  free(ccs->row_ind);
+  free(ccs->col_ptr);
+  free(ccs);
+}
+
+void free_crs(CRS* crs)
+{
+  free(crs->val);
+  free(crs->col_ind);
+  free(crs->row_ptr);
+  free(crs);
 }

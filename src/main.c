@@ -45,8 +45,12 @@ int main()
   //TEST CLEAN
   free_matrix(test_mtx_1);
   free_matrix(test_mtx_2);
+  free_ccs(test_ccs_1);
+  free_crs(test_crs_1);
   free_matrix(test_ucp_mtx_1);
   free_matrix(test_ucp_mtx_2);
+  
+  /*_________________________________________________________________________________*/
   
   //TEST - MULTIPLICATION
   Matrix* test_mtx_mtp_1 = init_matrix(10,10);
@@ -63,19 +67,27 @@ int main()
   
   test(assert_vector(test_vector_crs, test_vector_ccs), "Product matrix");
 
+  //TEST CLEAN
+  free_matrix(test_mtx_mtp_1);
+  free_matrix(test_mtx_mtp_2);
+  free_vector(test_vector_mtp);
+  free_crs(test_mtp_crs);
+  free_ccs(test_mtp_ccs);
+  free_vector(test_vector_crs);
+  free_vector(test_vector_ccs);
+  
+  /*_________________________________________________________________________________*/
+  
   //TEST - SPEED
-  Matrix* mtx_speed = init_matrix(1000,1000);
+  Matrix* mtx_speed = init_matrix(10,10);
   f2(mtx_speed,1,1,2);
   
   CRS* crs_speed = cp_crs(mtx_speed);
   CCS* ccs_speed = cp_ccs(mtx_speed);
-  
-  //TEST CLEAN
-  //free_matrix(mtx_speed);
 
-  Vector* vector_speed = gen_vector(1000, 0.1, 1);
-  
-  printf("\nSpeed test\n");
+  Vector* vector_speed = gen_vector(10, 0.1, 1);
+
+  printf("\nStandard ccs product\n");
   init_stoper();
   Vector* mtp_ccs_product = mtp_ccs(ccs_speed, vector_speed);
   print_stoper();
@@ -86,41 +98,53 @@ int main()
   print_stoper();
   
   //TEST PRODUCT VALIDATION
-  test(assert_vector(mtp_ccs_product, mtp_crs_product), "ccs crs product validation");
+  test(assert_vector(mtp_ccs_product, mtp_crs_product), "ccs and crs product");
   
   //TEST CLEAN
+  free_crs(crs_speed);
+  free_ccs(ccs_speed);
   
-  CRS* openmp_crs_speed = copy_crs(crs_speed);  	
+  //TEST OPENMP PRODUCT 
+  CRS* openmp_crs_speed = cp_crs(mtx_speed);  	
   printf("\nopenmp crs product\n");
   init_stoper();
   Vector* openmp_mtp_crs_product = openmp_mtp_crs(openmp_crs_speed, vector_speed);
   print_stoper();
   
-  //TEST PRODUCT VALIDATION
+  //TEST OPENMP PRODUCT VALIDATION
   test(assert_vector(openmp_mtp_crs_product, mtp_crs_product), "openmp product validation");
   
-  //TEST CLEAN
+  //TEST OPENMP CLEAN
+  free_crs(openmp_crs_speed);
+  free_vector(openmp_mtp_crs_product);
   
-  CRS* pthread_crs_speed = copy_crs(crs_speed);
+  //TEST PTHREAD PRODUCT
+  CRS* pthread_crs_speed = cp_crs(mtx_speed);
   printf("\npthread crs product\n");
   init_stoper();
   Vector* pthread_mtp_crs_product = pthread_mtp_crs(pthread_crs_speed, vector_speed);
   print_stoper();
   
-  //TEST PRODUCT VALIDATION
+  //TEST PTHREAD PRODUCT VALIDATION
   test(assert_vector(pthread_mtp_crs_product, mtp_crs_product), "pthread product validation");
   
-  //TEST CLEAN
+  //TEST PTHREAD CLEAN
   free_crs(pthread_crs_speed);
+  free_vector(pthread_mtp_crs_product);
   
+  //TEST MPI PRODUCT
   CRS* mpi_crs_speed = copy_crs(crs_speed);
   printf("\nmpi crs product\n");
   init_stoper();
-  mpi_mtp_crs(mpi_crs_speed, vector_speed);
+  Vector* mpi_mtp_crs_product = mpi_mtp_crs(mpi_crs_speed, vector_speed);
   print_stoper();
   
-  //TEST CLEAN
+  //TEST MPI PRODUCT VALIDATION
+  test(assert_vector(mpi_mtp_crs_product, mtp_crs_product), "mpi product validation");
+  
+  //TEST MPI CLEAN
   free_crs(mpi_crs_speed);
+  free_vector(mpi_mtp_crs_product);
   
   return 0;
 }

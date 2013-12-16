@@ -67,6 +67,32 @@ int assert_crs(const CRS* c1, const CRS* c2)
   return 1;
 }
 
+//Diff
+int diff_vector(const Vector* v1, const Vector* v2)
+{
+  //TODO
+  return 0;  
+}
+
+int diff_matrix(const Matrix* m1, const Matrix* m2)
+{
+  //TODO
+  return 0;
+}
+
+int diff_ccs(const CCS* ccs1, const CCS* ccs2)
+{
+  //TODO
+  return 0;
+}
+
+int diff_crs(const CRS* crs1, const CRS* crs2)
+{
+  //TODO
+  return 0;
+}
+
+//Test
 void test(int assert, const char* desc)
 {
 
