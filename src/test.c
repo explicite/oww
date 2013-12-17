@@ -147,8 +147,37 @@ int diff_ccs(const CCS* ccs1, const CCS* ccs2)
 
 int diff_crs(const CRS* crs1, const CRS* crs2)
 {
-  //TODO
-  return 0;
+  
+  if(crs1->val_size != crs2->val_size)
+    return 1;
+  
+  if(crs1->row_num != crs2->row_num)
+    return 1;
+  
+  register i, f;
+  f = 0;
+  for(i = 0; i < crs1->val_size; i++)
+  {
+      if(crs1->val[i] != crs2->val[i]){
+	printf("val %d should be %f but found %f\n", i, crs1->val[i], crs2->val[i]);
+	f++;
+      }
+      
+      if(crs1->col_ind[i] != crs2->col_ind[i]){
+	printf("col_ind %d should be %f but found %f\n", i, crs1->col_ind[i], crs2->col_ind[i]);
+	f++;
+      }
+  }
+  
+  for(i = 0; i < crs1->row_num; i++)
+  {
+    if(crs1->row_ptr[i] != crs2->row_ptr[i]){
+      printf("row_ptr %d should be %f but found %f\n", i, crs1->row_ptr[i], crs2->row_ptr[i]);  
+      f++;
+    }
+  }
+  
+  return f;
 }
 
 //Test
