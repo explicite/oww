@@ -299,11 +299,30 @@ Vector* openmp_mtp_ccs(const CCS* ccs, const Vector* vector)
   return product;
 }
 
-Vector* pthread_mtp_ccs(const CCS* ccs, const Vector* vector)
+Vector* pthread_mtp_ccs(CCS* ccs, Vector* vector)
 {
   
+  pthread_t* threads = (pthread_t*) malloc(sizeof(pthread_t)*THREAD_NUM);
+  
   Vector* product = init_vector(vector->size);
-  //TODO
+  
+  CCS_Slice* slice = (CCS_Slice*) malloc(sizeof(CCS_Slice)*THREAD_NUM);
+  register int i;
+  for(i = 0; i < THREAD_NUM; i++){
+    slice[i].thread_id = i;
+    slice[i].ccs = ccs;
+    slice[i].vector = vector;
+    slice[i].product = product;
+  }
+  
+  for(i = 0; i < THREAD_NUM; i++)
+    pthread_create(&threads[i], NULL, pthread_mtp_ccs_slice, (void*) &slice[i]);
+  
+  for(i = 0; i < THREAD_NUM; i++)
+    pthread_join(threads[i], NULL);
+  
+  free(threads);
+  free(slice);
   
   return product;
 }
@@ -535,7 +554,9 @@ int max_int(int* array, int size)
 }
 
 //pthread
-void* pthread_mtp_crs_slice(void* s){
+void* pthread_mtp_crs_slice(void* s)
+{
+
   CRS_Slice* slice = (CRS_Slice*) s;
   register int start = (slice->thread_id*slice->vector->size)/THREAD_NUM;
   register int stop = ((slice->thread_id+1)*slice->vector->size)/THREAD_NUM;
@@ -545,6 +566,20 @@ void* pthread_mtp_crs_slice(void* s){
     for(j = slice->crs->row_ptr[i]; j < slice->crs->row_ptr[i+1]; j++)
       slice->product->v[i] += slice->crs->val[j] * slice->vector->v[slice->crs->col_ind[j]];
     
+}
+
+void* pthread_mtp_ccs_slice(void* s)
+{
+  
+  CCS_Slice* slice = (CCS_Slice*) s;
+  register int start = (slice->thread_id*slice->vector->size)/THREAD_NUM;
+  register int stop = ((slice->thread_id+1)*slice->vector->size)/THREAD_NUM;
+  
+  register int i, j;
+  for(i = start; i < stop; i++)
+    for(j = slice->ccs->col_ptr[i]; j < slice->ccs->col_ptr[i+1]; j++)
+      slice->product->v[slice->ccs->row_ind[j]] += slice->ccs->val[j] * slice->vector->v[i]; 
+  
 }
 
 //Clean up

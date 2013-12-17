@@ -41,7 +41,7 @@ void print_ccs(const CCS*);
 CCS* copy_ccs(const CCS*);
 Vector* mtp_ccs(const CCS*, const Vector*);
 Vector* openmp_mtp_ccs(const CCS*, const Vector*);
-Vector* pthread_mtp_ccs(const CCS*, const Vector*);
+Vector* pthread_mtp_ccs(CCS*, Vector*);
 Vector* mpi_mtp_ccs(const CCS*, const Vector*);
 Vector* opencl_mtp_ccs(const CCS*, const Vector*);
 
@@ -64,7 +64,7 @@ int max_int(int*,int);
 //pthread
 typedef struct
 {
- 
+  
   int thread_id;
   CRS* crs;
   Vector* vector;
@@ -72,8 +72,18 @@ typedef struct
   
 } CRS_Slice;
 
-void* pthread_mtp_crs_slice(void*);
+typedef struct
+{
+  
+  int thread_id;
+  CCS* ccs;
+  Vector* vector;
+  Vector* product;
+  
+} CCS_Slice;
 
+void* pthread_mtp_crs_slice(void*);
+void* pthread_mtp_ccs_slice(void*);
 
 //Clean up
 void free_vector(Vector*);
