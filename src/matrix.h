@@ -6,7 +6,7 @@
 typedef struct 
 {
 
-  double** mtx;
+  double* mtx;
   int m;
   int n;
   
@@ -16,6 +16,7 @@ Matrix* init_matrix(int, int);
 void fprint_matrix(const Matrix*, FILE*);
 void print_matrix(const Matrix*);
 Matrix* copy_matrix(const Matrix*);
+Vector* mtp(const Matrix*, const Vector*);
 
 //Sparse matrix initializers
 void band(Matrix*, int, int);

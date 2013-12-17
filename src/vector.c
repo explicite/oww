@@ -22,6 +22,7 @@ Vector* init_vector(int size)
 void print_vector(const Vector* vector)
 {
 
+  printf("Vector size:%d\n", vector->size);
   register int i;
   for(i = 0; i < vector->size; i++)
       printf("%f\n", vector->v[i]);

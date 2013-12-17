@@ -1,4 +1,6 @@
 #include "matrix.h"
+
+#define PRECISION 10000.0
 //0 == true
 int assert_vector(const Vector*, const Vector*);
 int assert_matrix(const Matrix*, const Matrix*);
@@ -13,3 +15,6 @@ int dif_crs(const CRS*, const CRS*);
 
 //Test
 void test(int, const char*);
+
+//Util
+double tr(double);

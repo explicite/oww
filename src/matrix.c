@@ -11,26 +11,24 @@ Matrix* init_matrix(int m, int n)
 {
   
   srand(time(NULL));
+  
   Matrix* matrix = (Matrix*) malloc(sizeof(Matrix));
   matrix->m = m;
   matrix->n = n;
   
-  double** mtx = NULL;
-  matrix->mtx = (double**) malloc(m*sizeof(double));
-  register int i;
-  for(i = 0; i < m; i++)
-    matrix->mtx[i] = (double*) malloc(n*sizeof(double));
+  matrix->mtx = (double*) malloc(m*sizeof(double)*n*sizeof(double));
   
   return matrix;
 }
 
 void fprint_matrix(const Matrix* matrix, FILE* f)
 {
+  
   register int i, j;
   for(i = 0; i < matrix->m; i++)
   {
       for(j = 0; j < matrix->n; j++)
-	fprintf(f, "%f ", matrix->mtx[i][j]);
+	fprintf(f, "%f ", matrix->mtx[i+matrix->n*j]);
       
     fprintf(f, "\n");
   }
@@ -40,11 +38,12 @@ void fprint_matrix(const Matrix* matrix, FILE* f)
 
 void print_matrix(const Matrix* matrix)
 {
+  
   register int i, j;
   for(i = 0; i < matrix->m; i++)
   {
       for(j = 0; j < matrix->n; j++)
-	printf("%f ", matrix->mtx[i][j]);
+	printf("%f ", matrix->mtx[i+matrix->n*j]);
     
     printf("\n");
   }
@@ -52,22 +51,61 @@ void print_matrix(const Matrix* matrix)
   
 }
 
-Matrix* copy_matrix(const Matrix* org)
+Matrix* copy_matrix(const Matrix* matrix)
 {
   
-  Matrix* copy = init_matrix(org->m, org->n);
+  Matrix* copy = init_matrix(matrix->m, matrix->n);
   
   register int i, j;
-  for(i = 0; i < org->m; i++)
-    for(j = 0; j < org->n; j++)
-      copy->mtx[i][j] = org->mtx[i][j];
+  for(i = 0; i < matrix->m; i++)
+    for(j = 0; j < matrix->n; j++)
+      copy->mtx[i+copy->n*j] = matrix->mtx[i+matrix->n*j];
 
   return copy;
+}
+
+Vector* mtp(const Matrix* matrix, const Vector* vector)
+{
+  
+  Vector* product = init_vector(matrix->m);
+  
+  register int i, j, nj;
+  register double xj;
+  
+  register int i0, i1, i2;
+  register double yi0, yi1, yi2;
+  
+  for(i = 0; i < matrix->m; i += 3)
+  {
+    i0 = i;
+    i1 = i + 1;
+    i2 = i + 2;
+    
+    yi0 = 0.0;
+    yi1 = 0.0;
+    yi2 = 0.0;
+    
+    for(j = 0; j < matrix->n; j++)
+    {     
+      nj=matrix->n*j;
+      xj=vector->v[j];
+      yi0+=matrix->mtx[i0+nj]*xj;
+      yi1+=matrix->mtx[i1+nj]*xj;
+      yi2+=matrix->mtx[i2+nj]*xj;
+    }
+    
+    product->v[i0]=yi0;
+    product->v[i1]=yi1;
+    product->v[i2]=yi2;
+  }
+  
+  return product;
 }
 
 //Sparse matrix initializers
 void band(Matrix* matrix, int k, int w)
 {
+  
   register int i, j, x;
   for(i = 0; i < matrix->m; i++)
   {
@@ -76,41 +114,51 @@ void band(Matrix* matrix, int k, int w)
       if(j <= (w+i+k) && j >= (w+i-k))
       {
 	for(x = (w+i-k);x < (w+i+k); x++)
-	  matrix->mtx[i][j] = next(1,2);
+	  matrix->mtx[i+matrix->n*j] = next(1,2);
       }
       else
       {
-	matrix->mtx[i][j] = next(0,1.0/(matrix->n*matrix->m));
+	matrix->mtx[i+matrix->n*j] = next(0,1.0/(matrix->n*matrix->m));
       }
     }
   }
+  
 }
 
 void f1(Matrix* matrix, int k)
 { 
+  
   band(matrix, k, 1);
+  
 }
 
 void f2(Matrix* matrix, int k, int w, int z)
 { 
+  
   band(matrix, k, w);
   zero_row(matrix, z);
+  
 }
 
 void f3(Matrix* matrix, int k)
 {
+  
   band(matrix, k, 1);
+  
 }
 
 void f4(Matrix* matrix, int k, int w, int z)
 {
+  
   band(matrix, k, w);
   zero_collumn(matrix, z);
+
 }
 
 //Zero row
 void zero_row(Matrix* matrix, int k)
 {
+  
   register int r, z;
   for(r = 0; r < matrix->n; r++)
   {
@@ -118,18 +166,20 @@ void zero_row(Matrix* matrix, int k)
     while(z < k)
     {
       int i = rand()/(RAND_MAX/matrix->m);
-      if(matrix->mtx[r][i] > 0 && matrix->mtx[r][i] < 1)
+      if(matrix->mtx[r+matrix->n*i] > 0 && matrix->mtx[r+matrix->n*i] < 1)
       {
-	matrix->mtx[r][i] = 0;
+	matrix->mtx[r+matrix->n*i] = 0;
 	z++;
       }
     }
   }
+  
 }
 
 //Zero collumn
 void zero_collumn(Matrix* matrix, int k)
 { 
+  
   register int c, z;
   for(c = 0; c < matrix->m; c++)
   {
@@ -137,23 +187,25 @@ void zero_collumn(Matrix* matrix, int k)
     while(z < k)
     {
       int i = rand()/(RAND_MAX/matrix->n);
-      if(matrix->mtx[i][c] > 0 && matrix->mtx[i][c] <= 1)
+      if(matrix->mtx[i+matrix->n*c] > 0 && matrix->mtx[i+matrix->n*c] <= 1)
       {
-	matrix->mtx[i][c] = 0;
+	matrix->mtx[i+matrix->n*c] = 0;
 	z++;
       }
     }
   }
+  
 }
 
 //Non zero
 int non_zero(const Matrix* matrix)
 {
+  
   register int z, i, j;
   z = 0;
   for(i = 0; i < matrix->m; i++)
     for(j = 0; j < matrix->n; j++)
-      if(matrix->mtx[i][j] > 0)
+      if(matrix->mtx[i+matrix->n*j] > 0)
 	z++;
   
   return z;
@@ -186,9 +238,9 @@ CCS* cp_ccs(const Matrix* matrix)
   {
     for(j = 0; j < matrix->n; j++)
     {
-      if(matrix->mtx[j][i] > 0)
+      if(matrix->mtx[j+matrix->n*i] > 0)
       {
-	ccs->val[val_num] = matrix->mtx[j][i];
+	ccs->val[val_num] = matrix->mtx[j+matrix->n*i];
 	ccs->row_ind[val_num] = j;
 	
 	if(f_in_col == 1)
@@ -209,18 +261,20 @@ CCS* cp_ccs(const Matrix* matrix)
 
 Matrix* uncp_ccs(const CCS* ccs)
 {
-   Matrix* mtx = init_matrix(ccs->col_size-1,ccs->col_size-1);
+
+  Matrix* mtx = init_matrix(ccs->col_size-1,ccs->col_size-1);
    
    register int i, j;
    for(i = 0; i < ccs->col_size-1; i++)
     for(j = ccs->col_ptr[i]; j < ccs->col_ptr[i+1]; j++)
-      mtx->mtx[ccs->row_ind[j]][i] = ccs->val[j]; 
+      mtx->mtx[ccs->row_ind[j]+mtx->n*i] = ccs->val[j]; 
       
   return mtx;
 }
 
 void fprint_ccs(const CCS* ccs, FILE* f)
 {
+  
   register int i;
   for(i = 0; i < ccs->val_size; i++)
     fprintf(f, "%f ", ccs->val[i]);
@@ -241,6 +295,7 @@ void fprint_ccs(const CCS* ccs, FILE* f)
 
 void print_ccs(const CCS* ccs)
 {
+  
   register int i;
   for(i = 0; i < ccs->val_size; i++)
     printf("%f ", ccs->val[i]);
@@ -294,7 +349,12 @@ Vector* openmp_mtp_ccs(const CCS* ccs, const Vector* vector)
 {
   
   Vector* product = init_vector(vector->size);
-  //TODO
+ 
+  register int i, j;
+  #pragma omp parallel for schedule(dynamic, CHUNKSIZE) num_threads(THREAD_NUM)
+  for(i = 0; i < vector->size; i++)
+    for(j = ccs->col_ptr[i]; j < ccs->col_ptr[i+1]; j++)
+      product->v[ccs->row_ind[j]] += ccs->val[j]*vector->v[i]; 
   
   return product;
 }
@@ -372,9 +432,9 @@ CRS* cp_crs(const Matrix* matrix)
   {
     for(j = 0; j < matrix->n; j++)
     {
-      if(matrix->mtx[i][j] > 0)
+      if(matrix->mtx[i+matrix->n*j] > 0)
       {
-	crs->val[val_num] = matrix->mtx[i][j];
+	crs->val[val_num] = matrix->mtx[i+matrix->n*j];
 	crs->col_ind[val_num] = j;
 	
 	if(f_in_row == 1)
@@ -401,7 +461,7 @@ Matrix* uncp_crs(const CRS* crs)
   register int i, j;
   for(i = 0; i < crs->row_num-1; i++)
     for(j = crs->row_ptr[i]; j < crs->row_ptr[i+1]; j++)
-      mtx->mtx[i][crs->col_ind[j]] = crs->val[j];
+      mtx->mtx[i+mtx->n*crs->col_ind[j]] = crs->val[j];
   
  return mtx;
 }
@@ -585,33 +645,37 @@ void* pthread_mtp_ccs_slice(void* s)
 //Clean up
 void free_vector(Vector* vector)
 {
+  
   free(vector->v);
   free(vector);
+
 }
 
 void free_matrix(Matrix* matrix)
 {  
-  register int i;
-  for(i = 0; i < matrix->m; i++)
-    free(matrix->mtx[i]);
   
   free(matrix->mtx);
   
   free(matrix);
+  
 }
 
 void free_ccs(CCS* ccs)
 {
+  
   free(ccs->val);
   free(ccs->row_ind);
   free(ccs->col_ptr);
   free(ccs);
+  
 }
 
 void free_crs(CRS* crs)
 {
+  
   free(crs->val);
   free(crs->col_ind);
   free(crs->row_ptr);
   free(crs);
+  
 }
