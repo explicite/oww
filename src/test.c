@@ -1,74 +1,74 @@
 #include "test.h"
 
-int assert_vector(const Vector* v1, const Vector* v2)
+bool assert_vector(const Vector* v1, const Vector* v2)
 {
   
   register int i;
   if(v1->size != v2->size)
-    return 0;
+    return false;
   else 
     for(i = 0; i < v1->size; i++)
-      if(tr(v1->v[i]) != tr(v2->v[i]))
-	return 0;    
+      if(!equal(v1->v[i], v2->v[i]))
+	return false;    
 
-  return 1;
+  return true;
 }
 
-int assert_matrix(const Matrix* m1, const Matrix* m2)
+bool assert_matrix(const Matrix* m1, const Matrix* m2)
 {
   
   register int i, j;
   if(m1->m != m2->m || m1->n != m2->n)
-    return 0;
+    return false;
   else
     for(i = 0; i < m1->m; i++)
       for(j = 0; j < m1->m; j++)
-	if(tr(m1->mtx[i+m1->n*j]) != tr(m2->mtx[i+m2->n*j]))
-	  return 0;
+	if(!equal(m1->mtx[i+m1->n*j], m2->mtx[i+m2->n*j]))
+	  return false;
 	
-  return 1;
+  return true;
 }
 
-int assert_ccs(const CCS* c1, const CCS* c2)
+bool assert_ccs(const CCS* c1, const CCS* c2)
 {
 
   register int i;
   if(c1->val_size != c2->val_size || c1->col_size != c2->col_size)
-    return -1;
+    return false;
   else 
   {
     for(i = 0; i < c1->val_size; i++)
-      if(tr(c1->val[i]) != tr(c2->val[i]))
-	return 0;
-      else if(tr(c1->row_ind[i]) != tr(c2->row_ind[i]))
-	return 0;
+      if(!equal(c1->val[i], c2->val[i]))
+	return false;
+      else if(!equal(c1->row_ind[i], c2->row_ind[i]))
+	return false;
     for(i = 0; i < c1->col_size; i++)
-      if(tr(c1->col_ptr[i]) != tr(c2->col_ptr[i]))
-	return 0;
+      if(!equal(c1->col_ptr[i], c2->col_ptr[i]))
+	return false;
   }
   
-  return 1;
+  return true;
 }
 
-int assert_crs(const CRS* c1, const CRS* c2)
+bool assert_crs(const CRS* c1, const CRS* c2)
 {
 
   register int i;
   if(c1->val_size != c2->val_size || c1->row_num != c2->row_num)
-    return 0;
+    return false;
   else 
   {
     for(i = 0; i < c1->val_size; i++)
       if(c1->val[i] != c2->val[i])
-	return 0;
-      else if(tr(c1->col_ind[i]) != tr(c2->col_ind[i]))
-	return 0;
+	return false;
+      else if(!equal(c1->col_ind[i], c2->col_ind[i]))
+	return false;
     for(i = 0; i < c1->row_num; i++)
-      if(tr(c1->row_ptr[i]) != tr(c2->row_ptr[i]))
-	return 0;
+      if(!equal(c1->row_ptr[i], c2->row_ptr[i]))
+	return false;
   }
   
-  return 1;
+  return true;
 }
 
 //Diff
@@ -81,7 +81,7 @@ int diff_vector(const Vector* v1, const Vector* v2)
   register int i, f;
   f = 0;
   for(i = 0; i < v1->size; i++)
-    if(tr(v1->v[i]) != tr(v2->v[i])){
+    if(!equal(v1->v[i], v2->v[i])){
       printf("index %d should be %.17g but found %.17g\n", i, v1->v[i], v2->v[i]);
       f++;
     }
@@ -102,7 +102,7 @@ int diff_matrix(const Matrix* m1, const Matrix* m2)
   f = 0;
   for(i = 0; i < m1->m; i++)
     for(j = 0; j < m1->n; j++)
-      if(tr(m1->mtx[i+m1->n*j]) != tr(m2->mtx[i+m2->n*j])){
+      if(!equal(m1->mtx[i+m1->n*j], m2->mtx[i+m2->n*j])){
 	printf("index %d, %d should be %.17g but found %.17g\n", i, j, m1->mtx[i+m1->n*j], m2->mtx[i+m2->n*j]);
 	f++;
       }
@@ -123,12 +123,12 @@ int diff_ccs(const CCS* ccs1, const CCS* ccs2)
   f = 0;
   for(i = 0; i < ccs1->val_size; i++)
   {
-    if(tr(ccs1->row_ind[i]) != tr(ccs2->row_ind[i])){
+    if(!equal(ccs1->row_ind[i], ccs2->row_ind[i])){
       printf("row_ind %d should be %.17g but found %.17g\n", i, ccs1->row_ind[i], ccs2->row_ind[i]);
       f++;
     }
     
-    if(tr(ccs1->val[i]) != tr(ccs2->val[i])){
+    if(!equal(ccs1->val[i], ccs2->val[i])){
       printf("val %d should be %.17g but found %.17g\n", i, ccs1->val[i], ccs2->val[i]);
       f++;
     }
@@ -136,7 +136,7 @@ int diff_ccs(const CCS* ccs1, const CCS* ccs2)
   
   for(i = 0; i < ccs1->col_size; i++)
   {
-    if(tr(ccs1->col_ptr[i]) != tr(ccs2->col_ptr[i])){
+    if(!equal(ccs1->col_ptr[i], ccs2->col_ptr[i])){
       printf("col_ptr %d should be %.17g but found %.17g\n", i, ccs1->col_ptr[i], ccs2->col_ptr[i]);
       f++;
     }
@@ -158,12 +158,12 @@ int diff_crs(const CRS* crs1, const CRS* crs2)
   f = 0;
   for(i = 0; i < crs1->val_size; i++)
   {
-      if(tr(crs1->val[i]) != tr(crs2->val[i])){
+      if(!equal(crs1->val[i], crs2->val[i])){
 	printf("val %d should be %.17g but found %.17g\n", i, crs1->val[i], crs2->val[i]);
 	f++;
       }
       
-      if(tr(crs1->col_ind[i]) != tr(crs2->col_ind[i])){
+      if(!equal(crs1->col_ind[i], crs2->col_ind[i])){
 	printf("col_ind %d should be %.17g but found %.17g\n", i, crs1->col_ind[i], crs2->col_ind[i]);
 	f++;
       }
@@ -171,7 +171,7 @@ int diff_crs(const CRS* crs1, const CRS* crs2)
   
   for(i = 0; i < crs1->row_num; i++)
   {
-    if(tr(crs1->row_ptr[i]) != tr(crs2->row_ptr[i])){
+    if(!equal(crs1->row_ptr[i], crs2->row_ptr[i])){
       printf("row_ptr %d should be %.17g but found %.17g\n", i, crs1->row_ptr[i], crs2->row_ptr[i]);  
       f++;
     }
@@ -181,7 +181,7 @@ int diff_crs(const CRS* crs1, const CRS* crs2)
 }
 
 //Test
-void test(int assert, const char* desc)
+void test(bool assert, const char* desc)
 {
 
   if(assert)
@@ -191,8 +191,12 @@ void test(int assert, const char* desc)
 
 }
 
-//Util
-double tr(double oryginal)
+bool equal(double d1, double d2)
 {
-  return ((int) (oryginal * PRECISION)) / PRECISION;
+  
+  if ((((int) (d1 * PRECISION)) / PRECISION) == (((int) (d2 * PRECISION)) / PRECISION))
+    return true;
+  else 
+    return false;
+  
 }

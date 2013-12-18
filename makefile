@@ -3,10 +3,11 @@ CFLAGS = -fopenmp -pthread -O3
 PROJ1_DIR = "./src"
 OUT_DIR = "./out"
 
-all: mk_out random vector compres matrix test stoper main app
+all: mk_out bool random vector compres matrix test stoper main app
 
 app:
 	$(CC) $(CFLAGS) \
+	$(OUT_DIR)/bool.o \
 	$(OUT_DIR)/random.o \
 	$(OUT_DIR)/vector.o \
 	$(OUT_DIR)/compres.o \
@@ -35,6 +36,9 @@ vector:
 
 random:
 	$(CC) -c $(CFLAGS) $(PROJ1_DIR)/random.c -o $(OUT_DIR)/random.o
+
+bool:
+	$(CC) -c $(CFLAGS) $(PROJ1_DIR)/bool.c -o $(OUT_DIR)/bool.o
 
 clean: 
 	rm -rf $(OUT_DIR)
