@@ -351,7 +351,7 @@ Vector* openmp_mtp_ccs(const CCS* ccs, const Vector* vector)
   Vector* product = init_vector(vector->size);
  
   register int i, j;
-  #pragma omp parallel for schedule(dynamic, CHUNKSIZE) num_threads(THREAD_NUM)
+  #pragma omp parallel for schedule(static) private(i, j)
   for(i = 0; i < vector->size; i++)
     for(j = ccs->col_ptr[i]; j < ccs->col_ptr[i+1]; j++)
       product->v[ccs->row_ind[j]] += ccs->val[j]*vector->v[i]; 
@@ -545,7 +545,7 @@ Vector* openmp_mtp_crs(const CRS* crs, const Vector* vector)
   Vector* product = init_vector(vector->size);
   
   register int i, j;
-  #pragma omp parallel for schedule(dynamic, CHUNKSIZE) num_threads(THREAD_NUM)
+  #pragma omp parallel for schedule(static) private(i, j)
   for(i = 0; i < vector->size; i++)
     for(j = crs->row_ptr[i]; j < crs->row_ptr[i+1]; j++)
       product->v[i] += crs->val[j] * vector->v[crs->col_ind[j]];

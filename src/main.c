@@ -45,7 +45,6 @@ int main()
   Vector* standard_vector = gen_vector(1000, 0.1, 1);
   Vector* crs_product = mtp_crs(test_crs_1, standard_vector);
   Vector* ccs_product = mtp_ccs(test_ccs_1, standard_vector);
-  Vector* product = mtp(test_mtx_1, standard_vector);
   
   test(assert_vector(crs_product, ccs_product), "CCS and CRS product");
   
@@ -55,35 +54,39 @@ int main()
   free_ccs(test_ccs_1);
   free_crs(test_crs_1);
   free_vector(standard_vector);
+  free_vector(crs_product);
+  free_vector(ccs_product);
   free_matrix(test_ucp_mtx_1);
   free_matrix(test_ucp_mtx_2);
   
   //TESTING
   //TEST - CCS PARALLEL PRODUCT
-  Matrix* test_mtx = init_matrix(5, 5);
+  Matrix* test_mtx = init_matrix(100, 100);
   f2(test_mtx, 1, 1, 2);
   
   CCS* standard_test_ccs = cp_ccs(test_mtx);
-  Vector* vector = gen_vector(5, 0.1, 1);
+  Vector* vector = gen_vector(100, 0.1, 1);
+  free_matrix(test_mtx);
   
   Vector* standard_product = mtp_ccs(standard_test_ccs, vector);
+  
   Vector* openmp_product = openmp_mtp_ccs(standard_test_ccs, vector);
-  Vector* pthread_product = pthread_mtp_ccs(standard_test_ccs, vector);
-  
-  //TEST - CCS PARALLEL ASSERT
   test(assert_vector(standard_product, openmp_product), "CCS openmp product validation");
-  test(assert_vector(standard_product, pthread_product), "CCS pthread product validation");
+  free_vector(openmp_product);
   
-  diff_vector(standard_product, openmp_product);
-  diff_vector(standard_product, pthread_product);
+  Vector* pthread_product = pthread_mtp_ccs(standard_test_ccs, vector);
+  test(assert_vector(standard_product, pthread_product), "CCS pthread product validation");
+  free_vector(pthread_product);
+  
+  Vector* mpi_product = mpi_mtp_ccs(standard_test_ccs, vector);
+  test(assert_vector(standard_product, mpi_product), "CCS mpi product validation");
+  free_vector(mpi_product);
   
   //TEST - CLEAN
-  free_matrix(test_mtx);
+  //free_matrix(test_mtx);
   free_ccs(standard_test_ccs);
   free_vector(vector);
   free_vector(standard_product);
-  free_vector(openmp_product);
-  free_vector(pthread_product);
   
   /*
   //_________________________________________________________________________________
