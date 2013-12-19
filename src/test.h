@@ -9,11 +9,11 @@ bool assert_ccs(const CCS*, const CCS*);
 bool assert_crs(const CRS*, const CRS*);
 
 //Diff
-int diff_vector(const Vector*, const Vector*);
-int diff_matrix(const Matrix*, const Matrix*);
-int diff_ccs(const CCS*, const CCS*);
-int dif_crs(const CRS*, const CRS*);
+bool diff_vector(const Vector*, const Vector*);
+bool diff_matrix(const Matrix*, const Matrix*);
+bool diff_ccs(const CCS*, const CCS*);
+bool diff_crs(const CRS*, const CRS*);
 
 //Test
-void test(bool, const char*);
+bool test(bool, const char*);
 bool equal(double, double);

@@ -72,16 +72,20 @@ bool assert_crs(const CRS* c1, const CRS* c2)
 }
 
 //Diff
-int diff_vector(const Vector* v1, const Vector* v2)
+bool diff_vector(const Vector* v1, const Vector* v2)
 {
   
   if(v1->size != v2->size)
-    return 1;
+  {
+    printf("vector size should be %d but found %d\n", v1->size, v2->size);
+    return true;
+  }
   
   register int i, f;
   f = 0;
   for(i = 0; i < v1->size; i++)
-    if(!equal(v1->v[i], v2->v[i])){
+    if(!equal(v1->v[i], v2->v[i]))
+    {
       printf("index %d should be %.17g but found %.17g\n", i, v1->v[i], v2->v[i]);
       f++;
     }
@@ -89,20 +93,27 @@ int diff_vector(const Vector* v1, const Vector* v2)
   return f;  
 }
 
-int diff_matrix(const Matrix* m1, const Matrix* m2)
+bool diff_matrix(const Matrix* m1, const Matrix* m2)
 {
   
   if(m1->m != m2->m)
-    return 1;
+  {
+    printf("matrix colum size should be %d but found %d\n", m1->m, m2->m);
+    return true;
+  }
   
   if(m1->n != m2->n)
-    return 1;
+  {
+    printf("matrix row size should be %d but found %d\n", m1->n, m2->n);
+    return true;
+  }
   
   register int i, j, f;
   f = 0;
   for(i = 0; i < m1->m; i++)
     for(j = 0; j < m1->n; j++)
-      if(!equal(m1->mtx[i+m1->n*j], m2->mtx[i+m2->n*j])){
+      if(!equal(m1->mtx[i+m1->n*j], m2->mtx[i+m2->n*j]))
+      {
 	printf("index %d, %d should be %.17g but found %.17g\n", i, j, m1->mtx[i+m1->n*j], m2->mtx[i+m2->n*j]);
 	f++;
       }
@@ -110,25 +121,33 @@ int diff_matrix(const Matrix* m1, const Matrix* m2)
   return f;
 }
 
-int diff_ccs(const CCS* ccs1, const CCS* ccs2)
+bool diff_ccs(const CCS* ccs1, const CCS* ccs2)
 {
   
   if(ccs1->val_size != ccs2->val_size)
-    return 1;
+  {
+    printf("ccs val_size should be %d but found %d\n", ccs1->val_size, ccs2->val_size);
+    return true;
+  }
   
   if(ccs1-> col_size != ccs2->col_size)
-    return 1;
+  {
+    printf("ccs col_size should be %d but found %d\n", ccs1->col_size, ccs2->col_size);
+    return true;
+  }
   
   register i, f;
   f = 0;
   for(i = 0; i < ccs1->val_size; i++)
   {
-    if(!equal(ccs1->row_ind[i], ccs2->row_ind[i])){
+    if(!equal(ccs1->row_ind[i], ccs2->row_ind[i]))
+    {
       printf("row_ind %d should be %.17g but found %.17g\n", i, ccs1->row_ind[i], ccs2->row_ind[i]);
       f++;
     }
     
-    if(!equal(ccs1->val[i], ccs2->val[i])){
+    if(!equal(ccs1->val[i], ccs2->val[i]))
+    {
       printf("val %d should be %.17g but found %.17g\n", i, ccs1->val[i], ccs2->val[i]);
       f++;
     }
@@ -136,34 +155,43 @@ int diff_ccs(const CCS* ccs1, const CCS* ccs2)
   
   for(i = 0; i < ccs1->col_size; i++)
   {
-    if(!equal(ccs1->col_ptr[i], ccs2->col_ptr[i])){
+    if(!equal(ccs1->col_ptr[i], ccs2->col_ptr[i]))
+    {
       printf("col_ptr %d should be %.17g but found %.17g\n", i, ccs1->col_ptr[i], ccs2->col_ptr[i]);
       f++;
     }
   }
   
-  return 0;
+  return f;
 }
 
-int diff_crs(const CRS* crs1, const CRS* crs2)
+bool diff_crs(const CRS* crs1, const CRS* crs2)
 {
   
   if(crs1->val_size != crs2->val_size)
-    return 1;
+  {
+    printf("crs val_size should be %d but found %d\n", crs1->val_size, crs2->val_size);
+    return true;
+  }
   
   if(crs1->row_num != crs2->row_num)
-    return 1;
+  {
+    printf("crs row_num should be %d but found %d\n", crs1->row_num, crs2->row_num);
+    return true;
+  }
   
   register i, f;
   f = 0;
   for(i = 0; i < crs1->val_size; i++)
   {
-      if(!equal(crs1->val[i], crs2->val[i])){
+      if(!equal(crs1->val[i], crs2->val[i]))
+      {
 	printf("val %d should be %.17g but found %.17g\n", i, crs1->val[i], crs2->val[i]);
 	f++;
       }
       
-      if(!equal(crs1->col_ind[i], crs2->col_ind[i])){
+      if(!equal(crs1->col_ind[i], crs2->col_ind[i]))
+      {
 	printf("col_ind %d should be %.17g but found %.17g\n", i, crs1->col_ind[i], crs2->col_ind[i]);
 	f++;
       }
@@ -171,7 +199,8 @@ int diff_crs(const CRS* crs1, const CRS* crs2)
   
   for(i = 0; i < crs1->row_num; i++)
   {
-    if(!equal(crs1->row_ptr[i], crs2->row_ptr[i])){
+    if(!equal(crs1->row_ptr[i], crs2->row_ptr[i]))
+    {
       printf("row_ptr %d should be %.17g but found %.17g\n", i, crs1->row_ptr[i], crs2->row_ptr[i]);  
       f++;
     }
@@ -181,13 +210,19 @@ int diff_crs(const CRS* crs1, const CRS* crs2)
 }
 
 //Test
-void test(bool assert, const char* desc)
+bool test(bool assert, const char* desc)
 {
 
   if(assert)
+  {
     printf("Test: %s succed!\n", desc);
+    return true;
+  }
   else
+  {
     printf("Test: %s failed!\n", desc);
+    return false;
+  }
 
 }
 
