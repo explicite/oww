@@ -1,7 +1,6 @@
-#gcc
-*.o
+#cc
 /out
-*.out
+/build
 
 #qt
 *~
