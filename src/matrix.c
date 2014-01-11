@@ -572,10 +572,16 @@ Vector* pthread_mtp_crs(CRS* crs, Vector* vector)
   return product;
 }
 
+
 Vector* mpi_mtp_crs(CRS* crs, Vector* vector)
 {
+#ifdef MPI
   return mtp_mpi(crs, vector);
+#else
+  return vector;
+#endif
 }
+
 
 Vector* opencl_mtp_crs(const CRS* crs, const Vector* vector)
 {

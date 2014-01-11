@@ -79,11 +79,6 @@ int main()
   test(assert_vector(standard_product, pthread_product), "CRS pthread product validation");
   free_vector(pthread_product);
   
-  Vector* mpi_product = mpi_mtp_crs(standard_test_crs, vector);
-  test(assert_vector(standard_product, mpi_product), "CRS mpi product validation");
-  diff_vector(standard_product, mpi_product);
-  free_vector(mpi_product);
-  
   
   //TEST - CLEAN
   //free_matrix(test_mtx);

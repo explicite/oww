@@ -21,8 +21,6 @@ Vector* mtp_mpi(CRS* crs, Vector* vector)
   
   if(rank == 0)
   {  
-    printf("Number of tasks= %d My rank= %d Runnung on %s\n", numtask, rank, hostname);
-    
     register unsigned i, j;
     
     //CRS
@@ -70,15 +68,16 @@ Vector* mtp_mpi(CRS* crs, Vector* vector)
     {
       register unsigned start = ((i-1)*vector->size)/(numtask-1);
       register unsigned stop = (i*vector->size)/(numtask-1);
-      printf("start %d stop %d\n", start, stop);
       double p[stop-start];
       
       MPI_Recv(&p, stop-start, MPI_DOUBLE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      
       
       for(j = 0; j < stop - start; j++){
 	product->v[start+j] = p[j];
       }
     }
+    MPI_Barrier(MPI_COMM_WORLD);
     
     return product;
   } else { 
@@ -124,6 +123,7 @@ Vector* mtp_mpi(CRS* crs, Vector* vector)
 	p[i-start] += val[j] * v[col_ind[j]];
       
     MPI_Send(&p[0], stop-start, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+    MPI_Barrier(MPI_COMM_WORLD);
   }
   
   MPI_Finalize();
