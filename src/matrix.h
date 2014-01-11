@@ -1,3 +1,4 @@
+#pragma once
 #include <stdio.h>
 
 #include "vector.h"
@@ -56,7 +57,7 @@ CRS* copy_crs(const CRS*);
 Vector* mtp_crs(const CRS*, const Vector*);
 Vector* openmp_mtp_crs(const CRS*, const Vector*);
 Vector* pthread_mtp_crs(CRS*, Vector*);
-Vector* mpi_mtp_crs(const CRS*, const Vector*);
+Vector* mpi_mtp_crs(CRS*, Vector*);
 Vector* opencl_mtp_crs(const CRS*, const Vector*);
 
 //Util

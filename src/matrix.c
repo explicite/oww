@@ -1,11 +1,11 @@
 #include "matrix.h"
 #include "random.h"
+#include "mtp_mpi.h"
 #include <stdlib.h>
 #include <time.h>
 #include <pthread.h>
 
-#define CHUNKSIZE 100
-#define THREAD_NUM 4
+#define THREAD_NUM 2
 
 Matrix* init_matrix(int m, int n)
 {
@@ -354,7 +354,7 @@ Vector* openmp_mtp_ccs(const CCS* ccs, const Vector* vector)
   #pragma omp parallel for schedule(static) private(i, j)
   for(i = 0; i < vector->size; i++)
     for(j = ccs->col_ptr[i]; j < ccs->col_ptr[i+1]; j++)
-      product->v[ccs->row_ind[j]] += ccs->val[j]*vector->v[i]; 
+      product->v[ccs->row_ind[j]] += ccs->val[j] * vector->v[i]; 
   
   return product;
 }
@@ -383,15 +383,6 @@ Vector* pthread_mtp_ccs(CCS* ccs, Vector* vector)
   
   free(threads);
   free(slice);
-  
-  return product;
-}
-
-Vector* mpi_mtp_ccs(const CCS* ccs, const Vector* vector)
-{
-  
-  Vector* product = init_vector(vector->size);
-  //TODO
   
   return product;
 }
@@ -581,13 +572,9 @@ Vector* pthread_mtp_crs(CRS* crs, Vector* vector)
   return product;
 }
 
-Vector* mpi_mtp_crs(const CRS* crs, const Vector* vector)
+Vector* mpi_mtp_crs(CRS* crs, Vector* vector)
 {
-
-  Vector* product = init_vector(vector->size);
-  //TODO  
-  
-  return product;
+  return mtp_mpi(crs, vector);
 }
 
 Vector* opencl_mtp_crs(const CRS* crs, const Vector* vector)

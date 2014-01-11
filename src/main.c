@@ -8,6 +8,7 @@
 void test(int assert, const char* desc);
 int assert_matrix(Matrix* m1, Matrix* m2);
 int assert_vector(Vector* v1, Vector* v2);
+int rank;
 
 int main()
 {
@@ -60,31 +61,33 @@ int main()
   free_matrix(test_ucp_mtx_2);
   
   //TESTING
-  //TEST - CCS PARALLEL PRODUCT
+  //TEST - CRS PARALLEL PRODUCT
   Matrix* test_mtx = init_matrix(100, 100);
   f2(test_mtx, 1, 1, 2);
   
-  CCS* standard_test_ccs = cp_ccs(test_mtx);
+  CRS* standard_test_crs = cp_crs(test_mtx);
   Vector* vector = gen_vector(100, 0.1, 1);
   free_matrix(test_mtx);
   
-  Vector* standard_product = mtp_ccs(standard_test_ccs, vector);
+  Vector* standard_product = mtp_crs(standard_test_crs, vector);
   
-  Vector* openmp_product = openmp_mtp_ccs(standard_test_ccs, vector);
-  test(assert_vector(standard_product, openmp_product), "CCS openmp product validation");
+  Vector* openmp_product = openmp_mtp_crs(standard_test_crs, vector);
+  test(assert_vector(standard_product, openmp_product), "CRS openmp product validation");
   free_vector(openmp_product);
   
-  Vector* pthread_product = pthread_mtp_ccs(standard_test_ccs, vector);
-  test(assert_vector(standard_product, pthread_product), "CCS pthread product validation");
+  Vector* pthread_product = pthread_mtp_crs(standard_test_crs, vector);
+  test(assert_vector(standard_product, pthread_product), "CRS pthread product validation");
   free_vector(pthread_product);
   
-  Vector* mpi_product = mpi_mtp_ccs(standard_test_ccs, vector);
-  test(assert_vector(standard_product, mpi_product), "CCS mpi product validation");
+  Vector* mpi_product = mpi_mtp_crs(standard_test_crs, vector);
+  test(assert_vector(standard_product, mpi_product), "CRS mpi product validation");
+  diff_vector(standard_product, mpi_product);
   free_vector(mpi_product);
+  
   
   //TEST - CLEAN
   //free_matrix(test_mtx);
-  free_ccs(standard_test_ccs);
+  free_crs(standard_test_crs);
   free_vector(vector);
   free_vector(standard_product);
   
